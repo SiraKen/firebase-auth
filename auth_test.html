@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Auth Test</title>
+</head>
+<body>
+<!-- 画面 -->
+<div>
+  メールアドレス<input id="email" type="email" required/>
+</div>
+<div>
+  パスワード<input id="password" type="password" required/>
+</div>
+<button id="login">ログイン</button>
+<button id="register">新規登録</button>
+<button id="logout">ログアウト</button>
+<!-- スクリプト: CDN版 -->
+<script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-analytics.js";
+
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
+  import {
+    getAuth,
+    createUserWithEmailAndPassword,
+    signInWithEmailAndPassword,
+    onAuthStateChanged,
+    signOut
+  } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-auth.js";
+
+  // Your web app's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  const firebaseConfig = {
+    // 
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+  const auth = getAuth(app);
+
+  /**
+   * 登録
+   */
+  register.addEventListener('click', (e) => {
+    let email = document.getElementById('email').value;
+    let password = document.getElementById('password').value;
+    createUserWithEmailAndPassword(auth, email, password)
+    .then((userCredential) => {
+      // Signed in
+      console.log(userCredential.user)
+    })
+    .catch((error) => {
+      console.log(error)
+    });
+  });
+
+  /*
+   * ログイン
+   */
+  login.addEventListener('click', (e) => {
+    let mailAddress = document.getElementById('email').value;
+    let password = document.getElementById('password').value;
+    signInWithEmailAndPassword(auth, mailAddress, password)
+    .catch((error) => {
+      alert('ログインできません（' + error.message + '）');
+    });
+  });
+
+  /*
+   * ログアウト
+   */
+  logout.addEventListener('click', (e) => {
+    signOut(auth).then(() => {
+      console.log('ログアウトしました')
+    }).catch((error) => {
+      // An error happened.
+      console.log('ログアウトエラー')
+    });
+
+  });
+
+  /*
+   * ログイン状態の変更
+   */
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      // User is signed in, see docs for a list of available properties
+      // https://firebase.google.com/docs/reference/js/firebase.User
+      console.log('ログイン中')
+      console.log(user)
+    } else {
+      // User is signed out
+      console.log('ログインしていません')
+    }
+  });
+</script>
+</body>
+</html>
